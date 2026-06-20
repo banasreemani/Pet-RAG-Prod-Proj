@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+gradio==5.49.1
+requests
+python-dotenv
+langchain
+langchain-community
+langchain-core
+langchain-chroma
+langchain-huggingface
+langchain-ollama
+langchain-openai
+sentence-transformers
+chromadb
+rank-bm25
+litellm
+langfuse

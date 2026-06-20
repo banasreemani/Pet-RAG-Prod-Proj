@@ -1,0 +1,56 @@
+services:
+  pet-rag-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - /.env
+    volumes:
+      - ./knowledge-base:/app/knowledge-base
+      - ./vector_db:/app/vector_db
+      - ./feedback:/app/feedback
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health').raise_for_status()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  pet-rag-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - "7860:7860"
+    env_file:
+      - /.env
+    depends_on:
+      pet-rag-api:
+        condition: service_healthy
+    environment:
+      - API_URL=http://pet-rag-api:8000/ask
+      - FEEDBACK_URL=http://pet-rag-api:8000/feedback
+
+  pet-rag-evaluator:
+    build:
+      context: .
+      dockerfile: Dockerfile.evaluator
+    ports:
+      - "7861:7861"
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./feedback:/app/feedback
+      - ./evaluation:/app/evaluation
+      - ./vector_db:/app/vector_db
+      - ./knowledge-base:/app/knowledge-base
+
+      
