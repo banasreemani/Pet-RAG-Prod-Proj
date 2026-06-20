@@ -143,7 +143,12 @@ def answer_question(question: str, history: list[dict] = []) -> tuple[str, list[
 
     logger.info(f"Retrieved Docs Before Rerank: {len(docs)}")
 
-    docs = rerank_documents(combined, docs, top_n=5)
+    #docs = rerank_documents(combined, docs, top_n=5)
+    #--for railway memory limitations, we will limit the number of docs to 5 if reranker is disabled
+    if os.getenv("ENABLE_RERANKER", "true").lower() == "true":
+        docs = rerank_documents(combined, docs, top_n=5)
+    else:
+        docs = docs[:5]
 
     logger.info(f"Retrieved Docs After Rerank: {len(docs)}")
 
