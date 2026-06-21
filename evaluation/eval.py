@@ -108,7 +108,14 @@ def evaluate_retrieval(test: TestQuestion, k: int = 10) -> RetrievalEval:
     # Retrieve documents using shared answer module
     #retrieved_docs = fetch_context(test.question)
     retrieved_docs = hybrid_retrieve(test.question)
-    retrieved_docs = rerank_documents(test.question, retrieved_docs, top_n=5)
+    #retrieved_docs = rerank_documents(test.question, retrieved_docs, top_n=5)
+   
+    #--for railway memory limitations, we will limit the number of docs to 5 if reranker is disabled
+    if os.getenv("ENABLE_RERANKER", "true").lower() == "true":
+        docs = rerank_documents(test.question, retrieved_docs, top_n=5)
+    else:
+        docs = docs[:5]
+
 
     # Calculate MRR (average across all keywords)
     mrr_scores = [calculate_mrr(keyword, retrieved_docs) for keyword in test.keywords]
