@@ -1,3 +1,5 @@
+# Medium link
+https://medium.com/@banasree.mani/building-a-production-ready-rag-system-end-to-end-dc5ad6f5b415
 # Pet Care RAG Assistant
 
 A production-style Retrieval-Augmented Generation (RAG) application for pet care knowledge retrieval and question answering.
